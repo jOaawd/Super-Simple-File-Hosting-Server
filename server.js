@@ -4,7 +4,7 @@ const multer = require('multer');
 const { nanoid } = require('nanoid');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10000;  // Use port 10000 for Render, or 3000 for local development
 
 // Set up the storage engine for multer
 const storage = multer.diskStorage({
@@ -47,8 +47,10 @@ app.post('/upload', upload.single('file'), (req, res) => {
 app.get('/download/:filename', (req, res) => {
   const filePath = path.join(__dirname, 'uploads', req.params.filename);
 
-  res.download(filePath, req.params.filename, (err) => {
+  // Check if file exists before sending
+  res.sendFile(filePath, (err) => {
     if (err) {
+      console.error('Error sending file:', err);
       return res.status(404).send('File not found.');
     }
   });
