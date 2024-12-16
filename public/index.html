@@ -14,8 +14,7 @@
             display: none;
             margin-top: 20px;
         }
-        input[type="text"] {
-            width: 100%;
+        input[type="file"] {
             padding: 10px;
             font-size: 16px;
             margin: 10px 0;
@@ -44,15 +43,13 @@
 
     <div class="download-info">
         <h2>File Uploaded Successfully!</h2>
-        <label for="downloadLink">Copy your download link:</label>
-        <input type="text" id="downloadLink" readonly />
-        <a id="downloadBtn" href="#" target="_blank">Download Now</a>
+        <p>Click the button below to download the file:</p>
+        <button id="downloadBtn">Go to Download Page</button>
     </div>
 
     <script>
         document.getElementById('uploadForm').addEventListener('submit', function(event) {
             event.preventDefault();
-            console.log('Form submitted');
 
             const formData = new FormData();
             const fileInput = document.getElementById('fileInput');
@@ -64,25 +61,17 @@
             })
             .then(response => response.json())
             .then(data => {
-                console.log('Data received:', data);
-
-                // Check if we have a valid download link
                 if (data.downloadLink) {
                     const downloadLink = data.downloadLink;
-                    const downloadLinkInput = document.getElementById('downloadLink');
                     const downloadBtn = document.getElementById('downloadBtn');
 
-                    // Set the download link and show the "Download Now" button
-                    downloadLinkInput.value = downloadLink;
-                    downloadBtn.href = downloadLink;
-
-                    // Trigger the download programmatically (this is where we force it to download)
-                    downloadBtn.click();  // Automatically triggers the download
+                    // Set the button's link to the download page
+                    downloadBtn.onclick = function() {
+                        window.location.href = downloadLink;
+                    };
 
                     // Show the download section
                     document.querySelector('.download-info').style.display = 'block';
-                } else {
-                    console.error('Invalid response: ', data);
                 }
             })
             .catch(error => {
