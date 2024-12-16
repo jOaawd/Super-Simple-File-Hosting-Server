@@ -29,25 +29,69 @@ app.post('/upload', upload.single('file'), (req, res) => {
     return res.status(400).send('No file uploaded.');
   }
 
-  // Construct the download link and subdomain URL
-  const downloadLink = `${req.protocol}://${req.get('host')}/download/${req.file.filename}`;
-  const subdomain = `${req.file.filename}`;
+  // Construct the download page URL and file information
+  const downloadPage = `${req.protocol}://${req.get('host')}/download/${req.file.filename}`;
+  const fileName = req.file.filename;
 
   console.log(`File uploaded: ${req.file.filename}`); // Log the file upload for debugging
 
-  // Send back the download link and subdomain URL to the frontend
+  // Send back the download link and the download page URL to the frontend
   res.json({
     message: 'File uploaded successfully!',
-    downloadLink: downloadLink,
-    subdomain: subdomain
+    downloadLink: downloadPage,
+    fileName: fileName
   });
 });
 
-// Serve download page for files
+// Serve the download page for files
 app.get('/download/:filename', (req, res) => {
   const filePath = path.join(__dirname, 'uploads', req.params.filename);
 
-  // Check if file exists before sending
+  // Check if the file exists
+  if (fs.existsSync(filePath)) {
+    res.send(`
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Download File</title>
+          <style>
+              body {
+                  font-family: Arial, sans-serif;
+                  text-align: center;
+                  margin-top: 50px;
+              }
+              button {
+                  padding: 10px 20px;
+                  font-size: 16px;
+                  background-color: #007bff;
+                  color: white;
+                  border: none;
+                  cursor: pointer;
+              }
+              button:hover {
+                  background-color: #0056b3;
+              }
+          </style>
+      </head>
+      <body>
+          <h1>Download Your File</h1>
+          <p>File Name: ${req.params.filename}</p>
+          <button onclick="window.location.href='/downloadfile/${req.params.filename}'">Download Now</button>
+      </body>
+      </html>
+    `);
+  } else {
+    res.status(404).send('File not found.');
+  }
+});
+
+// Serve the file download
+app.get('/downloadfile/:filename', (req, res) => {
+  const filePath = path.join(__dirname, 'uploads', req.params.filename);
+
+  // Check if the file exists before sending
   res.sendFile(filePath, {
     headers: {
       'Content-Disposition': 'attachment; filename="' + req.params.filename + '"', // Force download
