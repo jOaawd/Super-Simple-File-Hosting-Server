@@ -76,6 +76,9 @@
                     downloadLinkInput.value = downloadLink;
                     downloadBtn.href = downloadLink;
 
+                    // Trigger the download programmatically (this is where we force it to download)
+                    downloadBtn.click();  // Automatically triggers the download
+
                     // Show the download section
                     document.querySelector('.download-info').style.display = 'block';
                 } else {
