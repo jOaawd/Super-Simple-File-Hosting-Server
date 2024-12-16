@@ -41,24 +41,24 @@ app.post('/upload', upload.single('file'), (req, res) => {
   });
 });
 
-// Route to render the download page
+// Route to render the download page for HTML files or directly download others
 app.get('/download/:filename', (req, res) => {
   const filePath = path.join(__dirname, 'uploads', req.params.filename);
-  if (path.extname(filePath) === '.html') {
-    // If the file is an HTML file, send the download page instead
-    res.sendFile(path.join(__dirname, 'public', 'downloadPage.html'));
-  } else {
-    // If it's not an HTML file, directly serve the file for download
-    res.download(filePath);
-  }
+
+  // Check if file exists before serving it
+  res.sendFile(filePath, (err) => {
+    if (err) {
+      return res.status(404).send('File not found.');
+    }
+  });
 });
 
-// Route to serve uploaded files (for non-HTML files)
+// Route to serve uploaded files for non-HTML files
 app.get('/uploads/:filename', (req, res) => {
   const filePath = path.join(__dirname, 'uploads', req.params.filename);
   res.sendFile(filePath, (err) => {
     if (err) {
-      res.status(404).send('File not found.');
+      return res.status(404).send('File not found.');
     }
   });
 });
