@@ -30,13 +30,14 @@
   <h1>Your file is ready for download!</h1>
   <button id="downloadBtn">Download File</button>
 
+  <!-- The JavaScript goes at the end of the body -->
   <script>
     // Get the filename from the URL
     const filePath = window.location.pathname.split('/').pop();
 
     // When the button is clicked, start downloading the file
     document.getElementById('downloadBtn').addEventListener('click', () => {
-      // Trigger the file download
+      // Trigger the file download by redirecting to the file URL
       window.location.href = `/uploads/${filePath}`;
     });
   </script>
