@@ -62,14 +62,11 @@
                 method: 'POST',
                 body: formData
             })
-            .then(response => {
-                console.log('Response received', response);
-                return response.json();
-            })
+            .then(response => response.json())
             .then(data => {
                 console.log('Data received:', data);
 
-                // Check if we have a valid download link and subdomain
+                // Check if we have a valid download link
                 if (data.downloadLink) {
                     const downloadLink = data.downloadLink;
                     const downloadLinkInput = document.getElementById('downloadLink');
