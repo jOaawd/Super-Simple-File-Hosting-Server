@@ -5,7 +5,54 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>File Upload</title>
   <style>
-    /* Your styles here */
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    input[type="file"] {
+      margin: 10px 0;
+    }
+
+    button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    .download-info {
+      margin-top: 20px;
+    }
+
+    .download-info input {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+    }
+
+    .download-info a {
+      margin-top: 10px;
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #007BFF;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+
+    .download-info a:hover {
+      background-color: #0056b3;
+    }
   </style>
 </head>
 <body>
@@ -14,6 +61,13 @@
     <input type="file" id="fileInput" name="file" required />
     <button type="submit">Upload</button>
   </form>
+
+  <div class="download-info" style="display:none;">
+    <h2>File Uploaded Successfully!</h2>
+    <label for="downloadLink">Copy your download link:</label>
+    <input type="text" id="downloadLink" readonly />
+    <a id="downloadBtn" href="#" target="_blank">Download Now</a>
+  </div>
 
   <script>
     document.getElementById('uploadForm').addEventListener('submit', function(event) {
@@ -29,8 +83,19 @@
       })
       .then(response => response.json())
       .then(data => {
-        // Show download link after upload
-        alert(`File uploaded successfully! \n Download Link: ${data.downloadLink}`);
+        // Display the download link and button
+        const downloadLink = data.downloadLink;
+        const subdomain = data.subdomain;
+
+        const downloadLinkInput = document.getElementById('downloadLink');
+        const downloadBtn = document.getElementById('downloadBtn');
+
+        // Set the download link and show the "Download Now" button
+        downloadLinkInput.value = downloadLink;
+        downloadBtn.href = downloadLink;
+
+        // Show the download section
+        document.querySelector('.download-info').style.display = 'block';
       })
       .catch(error => {
         console.error('Error uploading file:', error);
