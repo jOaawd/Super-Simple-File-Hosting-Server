@@ -28,8 +28,17 @@ app.post('/upload', upload.single('file'), (req, res) => {
   if (!req.file) {
     return res.status(400).send('No file uploaded.');
   }
-  // Return the unique filename as a response (for front-end use)
-  res.send({ file: req.file.filename });
+
+  // Construct the download link and subdomain URL
+  const downloadLink = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+  const subdomain = `${req.file.filename}`;
+
+  // Send back the file information to the frontend
+  res.json({
+    message: 'File uploaded successfully!',
+    downloadLink: downloadLink,
+    subdomain: subdomain
+  });
 });
 
 // Route to serve uploaded files
