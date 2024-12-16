@@ -1,39 +1,95 @@
-<div class="download-info" style="display:none;">
-  <h2>File Uploaded Successfully!</h2>
-  <label for="downloadLink">Copy your download link:</label>
-  <input type="text" id="downloadLink" readonly />
-  <a id="downloadBtn" href="#" target="_blank">Download Now</a>
-</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Upload</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        .download-info {
+            display: none;
+            margin-top: 20px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
 
-<script>
-  document.getElementById('uploadForm').addEventListener('submit', function(event) {
-    event.preventDefault();
+    <h1>Upload Your File</h1>
+    <form id="uploadForm" enctype="multipart/form-data">
+        <input type="file" id="fileInput" name="file" required />
+        <button type="submit">Upload File</button>
+    </form>
 
-    const formData = new FormData();
-    const fileInput = document.getElementById('fileInput');
-    formData.append('file', fileInput.files[0]);
+    <div class="download-info">
+        <h2>File Uploaded Successfully!</h2>
+        <label for="downloadLink">Copy your download link:</label>
+        <input type="text" id="downloadLink" readonly />
+        <a id="downloadBtn" href="#" target="_blank">Download Now</a>
+    </div>
 
-    fetch('/upload', {
-      method: 'POST',
-      body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-      // Display the download link and button
-      const downloadLink = data.downloadLink;
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            console.log('Form submitted');
 
-      const downloadLinkInput = document.getElementById('downloadLink');
-      const downloadBtn = document.getElementById('downloadBtn');
+            const formData = new FormData();
+            const fileInput = document.getElementById('fileInput');
+            formData.append('file', fileInput.files[0]);
 
-      // Set the download link and show the "Download Now" button
-      downloadLinkInput.value = downloadLink;
-      downloadBtn.href = downloadLink;
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                console.log('Response received', response);
+                return response.json();
+            })
+            .then(data => {
+                console.log('Data received:', data);
 
-      // Show the download section
-      document.querySelector('.download-info').style.display = 'block';
-    })
-    .catch(error => {
-      console.error('Error uploading file:', error);
-    });
-  });
-</script>
+                // Check if we have a valid download link and subdomain
+                if (data.downloadLink) {
+                    const downloadLink = data.downloadLink;
+                    const downloadLinkInput = document.getElementById('downloadLink');
+                    const downloadBtn = document.getElementById('downloadBtn');
+
+                    // Set the download link and show the "Download Now" button
+                    downloadLinkInput.value = downloadLink;
+                    downloadBtn.href = downloadLink;
+
+                    // Show the download section
+                    document.querySelector('.download-info').style.display = 'block';
+                } else {
+                    console.error('Invalid response: ', data);
+                }
+            })
+            .catch(error => {
+                console.error('Error uploading file:', error);
+            });
+        });
+    </script>
+
+</body>
+</html>
