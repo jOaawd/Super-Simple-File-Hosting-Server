@@ -48,7 +48,12 @@ app.get('/download/:filename', (req, res) => {
   const filePath = path.join(__dirname, 'uploads', req.params.filename);
 
   // Check if file exists before sending
-  res.sendFile(filePath, (err) => {
+  res.sendFile(filePath, {
+    headers: {
+      'Content-Disposition': 'attachment; filename="' + req.params.filename + '"', // Force download
+      'Content-Type': 'application/octet-stream' // Ensure the browser treats it as a file
+    }
+  }, (err) => {
     if (err) {
       console.error('Error sending file:', err);
       return res.status(404).send('File not found.');
