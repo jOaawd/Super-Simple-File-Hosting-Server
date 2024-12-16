@@ -5,72 +5,36 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>File Upload</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-    }
-    h1 {
-      color: #333;
-    }
-    form {
-      margin-bottom: 20px;
-    }
-    button {
-      background-color: #4CAF50;
-      color: white;
-      padding: 10px 20px;
-      border: none;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #45a049;
-    }
-    #downloadLink, #subdomain {
-      margin-top: 20px;
-      font-size: 16px;
-      color: #333;
-    }
+    /* Your styles here */
   </style>
 </head>
 <body>
-  <h1>Upload a File</h1>
-
-  <!-- File Upload Form -->
-  <form id="uploadForm">
-    <input type="file" id="fileInput" name="file" required>
+  <h1>Upload your file</h1>
+  <form id="uploadForm" enctype="multipart/form-data">
+    <input type="file" id="fileInput" name="file" required />
     <button type="submit">Upload</button>
   </form>
 
-  <!-- Displaying the download link and subdomain after upload -->
-  <p id="downloadLink"></p>
-  <p id="subdomain"></p>
-
-  <!-- Script to handle file upload and response -->
   <script>
-    // Handle the form submission and file upload
-    const form = document.getElementById('uploadForm');
-    const fileInput = document.getElementById('fileInput');
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault(); // Prevent the default form submission
+    document.getElementById('uploadForm').addEventListener('submit', function(event) {
+      event.preventDefault();
 
       const formData = new FormData();
+      const fileInput = document.getElementById('fileInput');
       formData.append('file', fileInput.files[0]);
 
-      const response = await fetch('/upload', {
+      fetch('/upload', {
         method: 'POST',
-        body: formData,
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        // Show download link after upload
+        alert(`File uploaded successfully! \n Download Link: ${data.downloadLink}`);
+      })
+      .catch(error => {
+        console.error('Error uploading file:', error);
       });
-
-      if (response.ok) {
-        const data = await response.json();
-
-        // Display the download link and subdomain to the user
-        document.getElementById('downloadLink').textContent = `Download Link: ${data.downloadLink}`;
-        document.getElementById('subdomain').textContent = `Subdomain: ${data.subdomain}`;
-      } else {
-        alert('File upload failed!');
-      }
     });
   </script>
 </body>
