@@ -49,8 +49,9 @@ app.get('/download/:filename', (req, res) => {
   const fileExt = path.extname(req.params.filename).toLowerCase();
 
   if (fileExt === '.html') {
-    // If the file is an HTML file, prompt download by setting the correct header
-    res.download(filePath, req.params.filename, (err) => {
+    // If the file is an HTML file, set the correct header and force download
+    res.setHeader('Content-Disposition', 'attachment; filename=' + req.params.filename);
+    res.sendFile(filePath, (err) => {
       if (err) {
         return res.status(404).send('File not found.');
       }
