@@ -1,7 +1,8 @@
 const express = require('express');
 const path = require('path');
 const multer = require('multer');
-const { nanoid } = require('nanoid');
+const { nanoid } = require('nanoid'); // You can use it directly without issues.
+const fs = require('fs');  // <-- Importing fs module
 
 const app = express();
 const PORT = process.env.PORT || 10000;  // Use port 10000 for Render, or 3000 for local development
