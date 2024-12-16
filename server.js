@@ -41,26 +41,28 @@ app.post('/upload', upload.single('file'), (req, res) => {
   });
 });
 
-// Serve download page for HTML files
+// Serve download page for HTML files (treat them differently)
 app.get('/download/:filename', (req, res) => {
   const filePath = path.join(__dirname, 'uploads', req.params.filename);
 
-  // Check if the file exists
-  res.sendFile(filePath, (err) => {
-    if (err) {
-      return res.status(404).send('File not found.');
-    }
-  });
-});
+  // Check file type to see if it's HTML
+  const fileExt = path.extname(req.params.filename).toLowerCase();
 
-// Serve uploaded files for direct download (non-HTML files)
-app.get('/uploads/:filename', (req, res) => {
-  const filePath = path.join(__dirname, 'uploads', req.params.filename);
-  res.sendFile(filePath, (err) => {
-    if (err) {
-      return res.status(404).send('File not found.');
-    }
-  });
+  if (fileExt === '.html') {
+    // If the file is an HTML file, prompt download by setting the correct header
+    res.download(filePath, req.params.filename, (err) => {
+      if (err) {
+        return res.status(404).send('File not found.');
+      }
+    });
+  } else {
+    // For non-HTML files, serve them directly for download
+    res.download(filePath, req.params.filename, (err) => {
+      if (err) {
+        return res.status(404).send('File not found.');
+      }
+    });
+  }
 });
 
 // Start the server
