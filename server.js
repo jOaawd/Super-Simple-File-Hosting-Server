@@ -30,7 +30,7 @@ app.post('/upload', upload.single('file'), (req, res) => {
   }
 
   // Construct the download link and subdomain URL
-  const downloadLink = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+  const downloadLink = `${req.protocol}://${req.get('host')}/download/${req.file.filename}`;
   const subdomain = `${req.file.filename}`;
 
   // Send back the file information to the frontend
@@ -41,7 +41,19 @@ app.post('/upload', upload.single('file'), (req, res) => {
   });
 });
 
-// Route to serve uploaded files
+// Route to render the download page
+app.get('/download/:filename', (req, res) => {
+  const filePath = path.join(__dirname, 'uploads', req.params.filename);
+  if (path.extname(filePath) === '.html') {
+    // If the file is an HTML file, send the download page instead
+    res.sendFile(path.join(__dirname, 'public', 'downloadPage.html'));
+  } else {
+    // If it's not an HTML file, directly serve the file for download
+    res.download(filePath);
+  }
+});
+
+// Route to serve uploaded files (for non-HTML files)
 app.get('/uploads/:filename', (req, res) => {
   const filePath = path.join(__dirname, 'uploads', req.params.filename);
   res.sendFile(filePath, (err) => {
