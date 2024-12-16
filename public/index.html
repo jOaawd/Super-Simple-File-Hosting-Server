@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Hosting</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Upload a File</h1>
+        <form id="uploadForm" enctype="multipart/form-data">
+            <input type="file" name="file" id="fileInput" required>
+            <button type="submit">Upload File</button>
+        </form>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const form = document.getElementById('uploadForm');
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+            const response = await fetch('/upload', {
+                method: 'POST',
+                body: formData,
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                const result = document.getElementById('result');
+                result.innerHTML = `
+                    <p>File uploaded successfully!</p>
+                    <p>Download Link: <a href="${data.fileUrl}" target="_blank">${data.fileUrl}</a></p>
+                    <p>Subdomain: ${data.subdomain}.localhost:3000</p>
+                `;
+            } else {
+                alert(data.message || 'Error uploading file');
+            }
+        });
+    </script>
+</body>
+</html>
